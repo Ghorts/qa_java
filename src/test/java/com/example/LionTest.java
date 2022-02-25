@@ -1,35 +1,25 @@
 package com.example;
 
-import org.junit.Before;
+
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@RunWith(Parameterized.class)
+@RunWith(MockitoJUnitRunner.class)
 public class LionTest {
-    private final String sex;
-    private final Boolean hasMane;
     @Mock
     private Feline feline;
-
-    public LionTest(String sex, Boolean hasMane) {
-        this.sex = sex;
-        this.hasMane = hasMane;
-    }
-
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void getKittensShowsOne() throws Exception {
@@ -42,20 +32,6 @@ public class LionTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    public void doesHaveManeSexMaleShowsTrueSexFemaleShowsFalse() throws Exception {
-        Lion lion = new Lion(sex, feline);
-        Boolean actual = lion.doesHaveMane();
-        assertEquals(hasMane, actual);
-    }
-
-    @Parameterized.Parameters
-    public static Object[][] getParameters() {
-        return new Object[][]{
-                {"Самец", true},
-                {"Самка", false},
-        };
-    }
 
     @Test
     public void getFoodReturnListOfPredatorFood() throws Exception {
@@ -66,5 +42,15 @@ public class LionTest {
 
         List<String> actual = lion.getFood();
         assertEquals(expected, actual);
+    }
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Test
+    public void testLionConstructorException() throws Exception {
+        exceptionRule.expect(Exception.class);
+        exceptionRule.expectMessage("Используйте допустимые значения пола животного - самец или самка");
+        Lion lion = new Lion("Небинарный", feline);
     }
 }
